@@ -64,5 +64,7 @@ window.addEventListener('popstate',()=>{desdeUrl();pintarFiltros();pintarCuadric
 window.addEventListener('hashchange',()=>{desdeUrl();pintarFiltros();pintarCuadricula();});
 let anchoPrevio=opcionesVista().join('');window.addEventListener('resize',()=>{const a=opcionesVista().join('');if(a!==anchoPrevio){anchoPrevio=a;pintarVista();}});
 const cabecera=$('#cabecera'),portada=$('.portada');new IntersectionObserver(([e])=>cabecera.classList.toggle('desplazada',!e.isIntersecting),{rootMargin:'-56px 0px 0px 0px'}).observe($('#marca-portada'));
+/* El reflejo tornasol de la marca sigue al puntero mientras pasa por encima. */
+{const logo=$('#marca-portada');if(!matchMedia('(prefers-reduced-motion:reduce)').matches){logo.addEventListener('pointermove',e=>{const r=logo.getBoundingClientRect(),p=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));logo.classList.add('siguiendo');logo.style.backgroundPosition=(100-p*100)+'% 0';});logo.addEventListener('pointerleave',()=>{logo.classList.remove('siguiendo');logo.style.backgroundPosition='';});}}
 async function iniciar(){pintarVista();try{await cargarDatos();}catch(e){$('#aviso').textContent=e.message;$('#aviso').className='error';}}
 iniciar();setInterval(()=>{if(!validando&&!document.hidden)cargarDatos().catch(()=>{});},60000);
