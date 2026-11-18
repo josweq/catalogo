@@ -1,4 +1,4 @@
-// GENERADO desde compartido/logica.js — no editar — sha256:78c0bc180d0454ee103f91a7c0d40007c3cb788763df7078b7c03d32d750bb63
+// GENERADO desde compartido/logica.js — no editar — sha256:4e3f7184aa36c1a8f1758df4823419c80ae1a539e0fcdf5b127598233c80be21
 /* Fuente única de reglas puras: Apps Script, navegador y Node. */
 (function (raiz) {
   'use strict';
@@ -81,6 +81,18 @@
   }
   function idFoto(enlace) { const m=/^https:\/\/drive\.google\.com\/file\/d\/([\w-]+)(?:\/|$)/.exec(String(enlace||'')); return m?m[1]:''; }
   const esObservacionPublica=texto=>!!String(texto||'').trim()&&!/^Ninguno/i.test(String(texto).trim());
-  raiz.logica={siguienteCodigo,totalBolsa,prorratear,validarVenta,validarPrenda,mensajeWhatsApp,mensajeCobro,esObservacionPublica,idFoto,centavos,fecha,exigir};
+  const EUR_A_LETRA={32:'XXS',34:'XS',36:'S',38:'M',40:'L',42:'XL',44:'XXL',46:'3XL'};
+  /* Talla corta para filtrar; el texto completo del Sheet se sigue mostrando en el detalle. */
+  function tallaCorta(texto) {
+    const t=String(texto||'').trim(), mayus=t.toUpperCase();
+    if(/^(ONE SIZE|TALLA ÚNICA|TALLA UNICA|ÚNICA|UNICA)$/.test(mayus)) return 'ÚNICA';
+    const letra=/(?:^|[^A-Z0-9])(3XL|XXS|XXL|XS|XL|S|M|L)(?=$|[^A-Z0-9])/.exec(mayus);
+    if(letra) return letra[1];
+    const eur=/EUR\s*(\d{2})/.exec(mayus)||/\d{1,2}\s*\/\s*(\d{2})(?!\d)/.exec(mayus);
+    if(eur && EUR_A_LETRA[eur[1]]) return EUR_A_LETRA[eur[1]];
+    if(/^\d{2}$/.test(t)) return t;
+    return 'VARIAS';
+  }
+  raiz.logica={tallaCorta,siguienteCodigo,totalBolsa,prorratear,validarVenta,validarPrenda,mensajeWhatsApp,mensajeCobro,esObservacionPublica,idFoto,centavos,fecha,exigir};
   if(typeof module!=='undefined') module.exports=raiz.logica;
 })(globalThis);
